@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.cart.CartDAOInter"> 
+
+  <!-- 관심모델 등록 -->
+  <insert id="create" parameterType="dev.mvc.cart.CartVO">
+    INSERT INTO cart(memberno, rentno, rdate)
+    VALUES(#{memberno}, #{rentno}, NOW())
+  </insert>
+  
+   <!-- 회원별 관심모델 목록  -->
+  <select id="list_by_memberno" resultType="dev.mvc.cart.CartVO" parameterType="int">
+    SELECT c.cartno, c.memberno, c.rentno, r.maker, r.carname, r.model, r.thumb1, r.thumb2, 
+               r.normal_price, r.weekend_price, c.rdate
+    FROM rent r, cart c
+    WHERE (r.rentno = c.rentno) AND c.memberno = #{memberno}
+    ORDER BY cartno DESC
+  </select> 
+  
+  <!-- 삭제  -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM cart
+    WHERE cartno = #{cartno}
+  </delete>
+
+</mapper>

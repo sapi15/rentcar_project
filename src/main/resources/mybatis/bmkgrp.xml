@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.bmkgrp.BmkgrpDAOInter"> 
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.bmkgrp.BmkgrpVO">
+    INSERT INTO bmkgrp(name, rdate)
+    VALUES(#{name}, NOW());
+  </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_bmkgrpno_asc" resultType="dev.mvc.bmkgrp.BmkgrpVO">
+    SELECT bmkgrpno, name, rdate
+    FROM bmkgrp
+    ORDER BY bmkgrpno ASC
+  </select>
+
+   <!-- 조회, id: read, 입력: bmkgrpno, 리턴: BmkgrpVO -->
+  <select id="read" resultType="dev.mvc.bmkgrp.BmkgrpVO" parameterType="int">       <!-- 조회의 일반적인 형태 -->
+    SELECT bmkgrpno, name, rdate
+    FROM bmkgrp
+    WHERE bmkgrpno=#{bmkgrpno}
+  </select>  
+  
+  <!-- 업데이트 -->
+  <update id="update" parameterType="dev.mvc.bmkgrp.BmkgrpVO">
+    UPDATE bmkgrp
+    SET name=#{name}
+    WHERE bmkgrpno = #{bmkgrpno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+      DELETE FROM bmkgrp
+      WHERE bmkgrpno = #{bmkgrpno };
+  </delete>
+  
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.rent.RentDAOInter"> 
+
+  
+ <!-- 등록 -->
+ <!--  <insert id="create" parameterType="dev.mvc.rent.RentVO">
+    INSERT INTO rent(rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom) 
+    VALUES(#{rentcargrpno}, #{adminno}, #{maker}, #{carname}, #{kind}, #{model}, #{fuel}, #{hp}, #{cc}, #{mileage}, #{file1}, #{file1saved},
+              #{thumb1}, #{size1}, #{file2}, #{file2saved}, #{thumb2}, #{size2}, #{word}, #{contents}, NOW(), #{passwd}, #{recom})
+  </insert>  -->
+  
+  <!--  연속 입력 지원 등록 -->
+  <!-- ContentsVO class의 contentsno 컬럼에 PK return하는 유형 --> 
+  <insert id="create" parameterType="dev.mvc.rent.RentVO" 
+            useGeneratedKeys="true" keyProperty="rentno">
+    INSERT INTO rent(rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price) 
+    VALUES(#{rentcargrpno}, #{adminno}, #{maker}, #{carname}, #{kind}, #{model}, #{fuel}, #{hp}, #{cc}, #{mileage}, #{file1}, #{file1saved},
+              #{thumb1}, #{size1}, #{file2}, #{file2saved}, #{thumb2}, #{size2}, #{word}, #{contents}, NOW(), #{passwd}, #{recom}, #{normal_price}, #{weekend_price})     
+  </insert>
+
+  
+  <!-- rentcargrp 별 전체 목록 -->
+  <select id="list_by_rentcargrpno" parameterType="int" resultType="dev.mvc.rent.RentVO">
+     SELECT rentno, rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                  size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price
+     FROM rent
+     WHERE rentcargrpno = #{rentcargrpno}
+     ORDER BY rentno ASC;
+  </select>
+  
+  <!-- 카테고리별 검색 목록 -->
+  <select id="list_by_rentcargrpno_search" resultType="dev.mvc.rent.RentVO" parameterType="HashMap">
+     SELECT rentno, rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                  size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price
+     FROM rent
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
+        WHERE rentcargrpno=#{rentcargrpno}
+      </when>
+      <otherwise> <!-- 검색하는 경우 -->
+        WHERE rentcargrpno=#{rentcargrpno}  AND (carname LIKE CONCAT('%', #{word}, '%')
+                                                                       OR contents LIKE CONCAT('%', #{word}, '%')  
+                                                                       OR word LIKE CONCAT('%', #{word}, '%'))
+      </otherwise>
+    </choose>
+    ORDER BY rentno DESC   
+  </select>
+   
+  <!-- 카테고리별 검색 레코드 갯수 -->
+  <select id="search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM rent
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우의 레코드 갯수 -->
+        WHERE rentcargrpno=#{rentcargrpno}
+      </when>
+      <otherwise> <!-- 검색하는 경우의 레코드 갯수 -->
+        WHERE rentcargrpno=#{rentcargrpno}  AND (carname LIKE CONCAT('%', #{word}, '%')
+                                                                       OR contents LIKE CONCAT('%', #{word}, '%')
+                                                                       OR word LIKE CONCAT('%', #{word}, '%'))
+      </otherwise>
+    </choose>
+  </select>
+  
+  
+ <!-- 카테고리별 검색 목록 + 페이징 + 메인 이미지 -->   
+  <select id="list_by_rentcargrpno_search_paging" resultType="dev.mvc.rent.RentVO" parameterType="HashMap">  
+       SELECT rentno, rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                    size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price
+       FROM rent
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 를 의미 -->
+        WHERE rentcargrpno=#{rentcargrpno}
+      </when>
+      <otherwise> <!-- 검색하는 경우 를 의미 -->
+        WHERE rentcargrpno=#{rentcargrpno}  AND (carname LIKE CONCAT('%', #{word}, '%')
+                                                                      OR contents LIKE CONCAT('%', #{word}, '%')
+                                                                      OR word LIKE CONCAT('%', #{word}, '%'))                                
+      </otherwise>   
+    </choose>
+    ORDER BY rentno DESC
+    LIMIT #{offset}, #{page_size}
+  </select>
+  
+   <!-- 카테고리별 검색 목록(그리드) + 페이징 + 메인 이미지 -->   
+  <select id="list_by_rentcargrpno_grid_search_paging" resultType="dev.mvc.rent.RentVO" parameterType="HashMap">  
+       SELECT rentno, rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                    size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price
+       FROM rent
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 를 의미 -->
+        WHERE rentcargrpno=#{rentcargrpno}
+      </when>
+      <otherwise> <!-- 검색하는 경우 를 의미 -->
+        WHERE rentcargrpno=#{rentcargrpno}  AND (carname LIKE CONCAT('%', #{word}, '%')
+                                                                      OR contents LIKE CONCAT('%', #{word}, '%')
+                                                                      OR word LIKE CONCAT('%', #{word}, '%'))                                
+      </otherwise>   
+    </choose>
+    ORDER BY rentno DESC
+    LIMIT #{offset}, #{page_size}
+  </select>
+  
+  
+  <!-- 일반적인 조회 -->
+  <select id="read"  resultType="dev.mvc.rent.RentVO" parameterType="int">
+     SELECT rentno, rentcargrpno, adminno, maker, carname, kind, model, fuel, hp, cc, mileage, file1, file1saved, thumb1, 
+                  size1, file2, file2saved, thumb2, size2, word, contents, rdate, passwd, recom, normal_price, weekend_price
+     FROM rent
+     WHERE rentno=#{rentno}
+  </select>
+  
+  <!-- 세부 정보 수정 -->
+  <update id="product_update" parameterType="dev.mvc.rent.RentVO">
+    UPDATE rent
+    SET kind=#{kind}, model=#{model}, fuel=#{fuel}, hp=#{hp}, cc=#{cc}, mileage=#{mileage}
+    WHERE rentno=#{rentno}
+  </update> 
+  
+  <!-- 텍스트 정보 수정 -->
+  <update id="update_text" parameterType="dev.mvc.rent.RentVO">
+    UPDATE rent
+    SET maker=#{maker}, carname=#{carname}, kind=#{kind}, model=#{model}, 
+          fuel=#{fuel}, hp=#{hp}, cc=#{cc}, mileage=#{mileage}, contents=#{contents}, word=#{word}, 
+          normal_price=#{normal_price}, weekend_price=#{weekend_price}
+    WHERE rentno=#{rentno}
+  </update>
+  
+  <!-- 파일 정보 수정  -->
+  <update id="update_file" parameterType="dev.mvc.rent.RentVO">
+    UPDATE rent
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, 
+          file2=#{file2}, file2saved=#{file2saved}, thumb2=#{thumb2}, size2=#{size2}
+    WHERE rentno=#{rentno}
+  </update>
+
+  <!-- 텍스트 정보 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM rent
+    WHERE rentno=#{rentno}
+  </delete>
+  
+ <!-- 차량 전체 목록  -->
+ <select id="list_all_join" resultType="dev.mvc.rent.Rentcargrp_RentVO" >
+    SELECT i.rentno, i.rentcargrpno, i.adminno, i.maker, i.carname, i.kind, i.model, i.fuel, i.hp, i.cc, i.mileage, i.recom, i.normal_price, i.weekend_price,
+               i.file1, i.file1saved, i.thumb1, i.size1, i.file2, i.file2saved, i.thumb2, i.size2
+    FROM rentcargrp r, rent i
+    WHERE r.rentcargrpno= i.rentcargrpno
+    ORDER BY rentcargrpno ASC, rentno ASC;
+ </select>
+ 
+    <!-- 차량 전체 목록(join) + 페이징 + 검색 -->   
+  <select id="list_all_join_search_paging" resultType="dev.mvc.rent.Rentcargrp_RentVO" parameterType="HashMap">  
+       SELECT i.rentno, i.rentcargrpno, i.adminno, i.maker, i.carname, i.kind, i.model, i.fuel, i.hp, i.cc, i.mileage, i.recom, i.normal_price, i.weekend_price,
+                  i.file1, i.file1saved, i.thumb1, i.size1, i.file2, i.file2saved, i.thumb2, i.size2, i.word, i.contents, i.rdate
+       FROM rentcargrp r, rent i
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 를 의미 -->
+        WHERE r.rentcargrpno=i.rentcargrpno
+      </when>
+      <otherwise> <!-- 검색하는 경우 를 의미 -->
+        WHERE r.rentcargrpno=i.rentcargrpno  AND (carname LIKE CONCAT('%', #{word}, '%')
+                                                                      OR contents LIKE CONCAT('%', #{word}, '%')
+                                                                      OR word LIKE CONCAT('%', #{word}, '%'))                                
+      </otherwise>   
+    </choose>
+    ORDER BY rentno ASC
+    <!-- LIMIT #{offset}, #{page_size} -->
+  </select>
+  
+   <!-- 추천 수-->
+  <update id="update_recom" parameterType="int">
+    UPDATE rent
+    SET recom = recom + 1
+    WHERE rentno=#{rentno}
+  </update>
+  
+  
+
+  
+</mapper>

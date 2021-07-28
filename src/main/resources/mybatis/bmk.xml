@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.bmk.BmkDAOInter"> 
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.bmk.BmkVO">
+    INSERT INTO bmk(name, content, rdate, bmkgrpno)
+    VALUES(#{name}, #{content}, NOW(), #{bmkgrpno} )
+  </insert>
+  
+  <!-- 
+  전체 목록
+  레코드 갯수 만큼 BmkVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<BmkVO> list = new ArrayList<BmkVO>(); 
+  -->
+  <select id="list_all" resultType="dev.mvc.bmk.BmkVO">
+    SELECT bmkno, name, content, rdate, bmkgrpno
+    FROM bmk
+    ORDER BY bmkno ASC
+  </select>
+  
+  <!-- Bmkgrp 별 목록 -->
+  <select id="list_by_bmkgrpno" resultType="dev.mvc.bmk.BmkVO" parameterType="int">
+    SELECT bmkno, name, content, rdate, bmkgrpno
+    FROM bmk
+    WHERE bmkgrpno = #{bmkgrpno}
+    ORDER BY bmkno ASC
+  </select>
+  
+  <!-- Bmkgrp + Bmk join, 연결 목록 -->
+  <select id="list_all_join" resultType="dev.mvc.bmk.Bmkgrp_BmkVO">
+    SELECT a.bmkgrpno as g_bmkgrpno, a.name as g_name,
+               b.bmkno, b.bmkgrpno, b.name, b.content, b.rdate
+    FROM bmkgrp a, bmk b
+    WHERE a.bmkgrpno =  b.bmkgrpno
+    ORDER BY bmkgrpno ASC, bmkno ASC
+  </select>
+  
+   <!-- 조회, id: read, 입력: bmkno, 리턴: BmkVO -->
+  <select id="read" resultType="dev.mvc.bmk.BmkVO" parameterType="int">       <!-- 조회의 일반적인 형태 -->
+    SELECT bmkno, name, content, rdate, bmkgrpno
+    FROM bmk
+    WHERE bmkno = #{bmkno}
+  </select>  
+  
+  <!-- 업데이트 -->
+  <update id="update" parameterType="dev.mvc.bmk.BmkVO">
+    UPDATE bmk
+    SET bmkgrpno = #{bmkgrpno}, name=#{name}, content=#{content}
+    WHERE bmkno = #{bmkno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM bmk
+    WHERE bmkno = #{bmkno}
+  </delete>
+  
+
+</mapper>

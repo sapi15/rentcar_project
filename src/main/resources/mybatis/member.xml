@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.member.MemberDAOInter">
+
+  <!-- ID 체크 -->
+  <select id="checkID" resultType="int" parameterType="String">
+    SELECT COUNT(id) as cnt
+    FROM member
+    WHERE id=#{id}
+  </select>
+
+  <!-- 회원등록 -->
+  <insert id="create" parameterType="dev.mvc.member.MemberVO">
+    INSERT INTO member(id, passwd, mname, tel, email1, email2, email_yn, postcode, address1, address2, mdate, grade)
+    VALUES(#{id}, #{passwd}, #{mname}, #{tel}, #{email1}, #{email2}, #{email_yn}, #{postcode}, #{address1}, #{address2}, NOW(), #{grade}) 
+  </insert>
+  
+  <!-- 회원 목록 -->
+  <select id="list" resultType="dev.mvc.member.MemberVO">
+    SELECT memberno, id, passwd, mname, tel, email1, email2, email_yn, postcode, address1, address2, mdate, grade
+    FROM member
+    ORDER BY memberno ASC
+  </select>
+  
+  <!-- 회원 정보 조회, memberno로 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.member.MemberVO">
+    SELECT memberno, id, passwd, mname, tel, email1, email2, email_yn, postcode, address1, address2, mdate, grade
+    FROM member
+    WHERE memberno=#{memberno}
+  </select>
+  
+  <!-- 회원 정보 조회, id로 -->
+  <select id="readByid" parameterType="String" resultType="dev.mvc.member.MemberVO">
+    SELECT memberno, id, passwd, mname, tel, email1, email2, email_yn, postcode, address1, address2, mdate, grade
+    FROM member
+    WHERE id=#{id}
+  </select>
+  
+  <!-- 회원 정보 업데이트 -->
+  <update id="update" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member
+    SET mname=#{mname}, tel=#{tel}, postcode=#{postcode}, address1=#{address1}, address2=#{address2}, grade=#{grade}
+          email1=#{email1}, email2=#{email2}
+    WHERE memberno=#{memberno}
+  </update>
+  
+  <!-- 회원 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM member
+    WHERE memberno=#{memberno}
+  </delete>
+  
+  <!-- 패스워드 변경 -->
+  <update id="passwd_update" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE memberno=#{memberno}
+  </update>
+  
+  <!--  현재 패스워드 검사 -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE memberno=#{memberno} AND passwd=#{passwd}
+  </select>
+  
+  <!-- 로그인 -->
+  <select id="login" resultType="int" parameterType="Map">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE id=#{id} AND passwd=#{passwd};
+  </select>
+  
+  <!-- id로 회원 정보 조회 -->
+  <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
+    SELECT memberno, id, passwd, mname, tel, email1, email2, email_yn, postcode, address1, address2, mdate, grade
+    FROM member
+    WHERE id = #{id}
+  </select>
+  
+  <!-- id찾기 전 memberno 추출 -->
+  <select id="id_memberno_check" parameterType="HashMap" resultType="int">
+    SELECT memberno
+    FROM member
+    WHERE mname=#{mname} AND email1=#{email1} AND email2=#{email2}
+  </select>
+  
+  <!-- id찾기 전 정보 검사 -->
+  <select id="id_personal_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE mname=#{mname} AND email1=#{email1} AND email2=#{email2}
+  </select>
+  
+  <!-- id 찾기  -->
+  <select id="id_find" parameterType="int" resultType="String">
+    SELECT id
+    FROM member
+    WHERE  memberno=#{memberno}
+  </select>
+  
+  <!-- passwd찾기 전 정보 memberno추출 -->
+  <select id="passwd_memberno_check" parameterType="HashMap" resultType="int">
+    SELECT memberno
+    FROM member
+    WHERE mname=#{mname} AND id=#{id} AND email1=#{email1} AND email2=#{email2}
+  </select>
+  
+  <!-- passwd찾기 전 정보 검사 -->
+  <select id="passwd_personal_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE mname=#{mname} AND id=#{id} AND email1=#{email1} AND email2=#{email2}
+  </select>
+  
+  <!-- passwd 찾기  -->
+  <select id="passwd_find" parameterType="int" resultType="String">
+    SELECT passwd
+    FROM member
+    WHERE  memberno=#{memberno}
+  </select>
+  
+  <!-- 회원 등급변경 -->
+  <update id="grade_update" parameterType="HashMap">
+    UPDATE member
+    SET grade=#{grade}
+    WHERE memberno=#{memberno}
+  </update>
+  
+
+
+
+</mapper>

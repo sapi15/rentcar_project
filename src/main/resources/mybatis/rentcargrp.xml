@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.rentcargrp.RentcargrpDAOInter"> 
+
+<!--   <insert id="create" parameterType="dev.mvc.rentcargrp.RentcargrpVO">
+    INSERT INTO rentcargrp(seqno, userna, carna, kind, rentype, rdate, returnid)
+    VALUES(#{seqno}, #{userna}, #{carna}, #{kind},  #{rentype}, NOW(), #{returnid})
+  </insert>
+-->
+
+  <insert id="create" parameterType="dev.mvc.rentcargrp.RentcargrpVO">
+    INSERT INTO rentcargrp(seqno, cate, rdate)
+    VALUES(#{seqno}, #{cate}, NOW())
+  </insert>
+  
+<!--   <select id="list_categrpno_asc" resultType="dev.mvc.rentcargrp.RentcargrpVO">
+    SELECT rentcargrpno, seqno, userna, carna, kind, rentype, rdate, returnid
+    FROM rentcargrp
+    ORDER BY rentcargrpno ASC
+  </select>
+   -->
+  <select id="list_rentcargrpno_asc" resultType="dev.mvc.rentcargrp.RentcargrpVO">
+    SELECT rentcargrpno, seqno, cate, rdate
+    FROM rentcargrp
+    ORDER BY rentcargrpno ASC
+  </select>
+  
+  
+    <!-- 
+  레코드 갯수 만큼 RentcargrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<RentcargrpVO> list = new ArrayList<RentcargrpVO>(); 
+  -->
+<!--   <select id="list_seqno_asc" resultType="dev.mvc.rentcargrp.RentcargrpVO">
+    SELECT rentcargrpno, seqno, userna, carna, kind, rentype, rdate, returnid
+    FROM rentcargrp
+    ORDER BY seqno ASC
+  </select> -->
+  
+  <select id="list_seqno_asc" resultType="dev.mvc.rentcargrp.RentcargrpVO">
+    SELECT rentcargrpno, seqno, cate, rdate
+    FROM rentcargrp
+    ORDER BY seqno ASC
+  </select>
+  
+  
+   <!-- 조회, id: read, 입력: rentcargrpno, 리턴: RentcargrpVO -->
+<!--   <select id="read" resultType="dev.mvc.rentcargrp.RentcargrpVO" parameterType="int">
+    SELECT rentcargrpno, seqno, userna, carna, kind, rentype, rdate, returnid
+    FROM rentcargrp
+    WHERE rentcargrpno=#{rentcargrpno}
+  </select> -->
+  <select id="read" resultType="dev.mvc.rentcargrp.RentcargrpVO" parameterType="int">
+    SELECT rentcargrpno, seqno, cate, rdate
+    FROM rentcargrp
+    WHERE rentcargrpno=#{rentcargrpno}
+  </select>
+  
+   <!-- 수정, id: update, 입력: RentcargrpVO, 리턴: int -->
+<!--   <update id="update" parameterType="dev.mvc.rentcargrp.RentcargrpVO">
+    UPDATE rentcargrp
+    SET seqno=#{seqno}, userna=#{userna}, carna=#{carna}, kind=#{kind}, rentype=#{rentype}, returnid=#{returnid}
+    WHERE rentcargrpno=#{rentcargrpno}
+  </update> -->
+  <update id="update" parameterType="dev.mvc.rentcargrp.RentcargrpVO">
+    UPDATE rentcargrp
+    SET seqno=#{seqno}, cate=#{cate}
+    WHERE rentcargrpno=#{rentcargrpno}
+  </update>
+  
+   <!-- 삭제 처리, id=delete, 입력: PK, 리턴: 삭제된 갯수 int -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM rentcargrp
+    WHERE rentcargrpno=#{rentcargrpno}
+  </delete>
+  
+  <!-- 우선순위 상향 up 10 ▷ 1 -->
+  <update id="update_seqno_up" parameterType="int">
+    UPDATE rentcargrp
+    SET seqno = seqno - 1
+    WHERE rentcargrpno=#{rentcargrpno}
+  </update>
+
+  <!-- 우선순위 하향 down 1 ▷ 10 --> 
+  <update id="update_seqno_down" parameterType="int">
+    UPDATE rentcargrp
+    SET seqno = seqno + 1
+    WHERE rentcargrpno=#{rentcargrpno}
+  </update>
+  
+   <!-- returnid 수정, id: update_returnid, 입력: RentcargrpVO, 리턴: int -->
+  <update id="update_returnid" parameterType="dev.mvc.rentcargrp.RentcargrpVO">
+    UPDATE rentcargrp
+    SET returnid=#{returnid}
+    WHERE rentcargrpno=#{rentcargrpno}
+  </update>
+  
+  
+   
+</mapper> 

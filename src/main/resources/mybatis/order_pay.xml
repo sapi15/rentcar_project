@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.order_pay.Order_payDAOInter">
+
+  <!-- 결제  --> 
+  <insert id="create" parameterType="dev.mvc.order_pay.Order_payVO">
+    INSERT INTO order_pay(memberno, rname, rtel, payment, amount, rdate)
+    VALUES(#{memberno}, #{rname}, #{rtel}, #{payment}, #{amount}, NOW())
+  </insert>
+  
+  <!-- 결제 목록 -->
+  <select id="list_by_memberno" parameterType="int" resultType="dev.mvc.order_pay.Order_payVO">
+    SELECT order_payno, memberno, rname, rtel, paytype, payment, rdate
+    FROM  order_pay
+    WHERE memberno=#{memberno}
+    ORDER BY order_payno DESC
+  </select>
+  
+
+</mapper>
